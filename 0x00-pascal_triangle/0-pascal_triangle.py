@@ -1,20 +1,21 @@
+
 #!/usr/bin/python3
-'''Pascal's triangle'''
+""" Pascal Triangle """
 
 
 def pascal_triangle(n):
-    '''Draws Pascal's Triangle'''
-    num_list = []
+    """calculates pascal and returns a list"""
+    pascal_list = []
+
     if n <= 0:
-        return num_list
+        return pascal_list
 
-    result = [1]
-    num_list.append(result)
-    for i in range(1, n):
-        temp = [0] + result + [0]
-        result = []
-        for j in range(len(temp) - 1):
-            result.append(temp[j] + temp[j + 1])
-        num_list.append(result)
-
-    return num_list
+    for i in range(n):
+        temp_list = []
+        for j in range(i + 1):
+            if (j == 0 or j == i):
+                temp_list.append(1)
+            else:
+                temp_list.append(pascal_list[i-1][j-1] + pascal_list[i-1][j])
+        pascal_list.append(temp_list)
+    return pascal_list
