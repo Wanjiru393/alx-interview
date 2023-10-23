@@ -1,43 +1,40 @@
 #!/usr/bin/python3
-'''Log parser'''
-
-
+"""0-stats.py"""
 import sys
 
-words = []
 
-size_list = []
+def print_stats(total_size, status_codes):
+    print("File size: {}".format(total_size))
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print("{}: {}".format(code, status_codes[code]))
 
-status_dict = {'200': 0, '301': 0, '400': 0,
-               '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
 
-sum_size = 0
+def parse_line(line):
+    try:
+        parts = line.split()
+        size = int(parts[-1])
+        code = int(parts[-2])
+        return (size, code)
+    except (TypeError):
+        return None
+
+
+total_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
+
 try:
     for line in sys.stdin:
-        words.append(line)
-        if len(words) % 10 == 0:
-            for i in range(len(words)):
-                size_file = words[i]
-                file_split = size_file.split(' ')
-                file_size = file_split[-1]
-                status_code = file_split[-2]
-                if status_code in status_dict:
-                    status_dict[status_code] += 1
-                size_list.append(file_size)
-            for sizes in size_list:
-                sum_size = sum_size + int(sizes)
-            print("File size: {}".format(sum_size))
-            for k, v in status_dict.items():
-                if status_dict[k] != 0:
-                    print("{}: {}".format(k, status_dict[k]))
-            status_dict = {'200': 0, '301': 0, '400': 0,
-                           '401': 0, '403': 0, '404': 0, '405': 0, '500': 0}
+        parsed = parse_line(line)
+        if parsed:
+            size, code = parsed
+            total_size += size
+            if code in status_codes:
+                status_codes[code] += 1
+        line_count += 1
+        if line_count % 10 == 0:
+            print_stats(total_size, status_codes)
 except KeyboardInterrupt:
-    pass
-finally:
-    for sizes in size_list:
-        sum_size = sum_size + int(sizes)
-    print("File size: {}".format(sum_size))
-    for k, v in status_dict.items():
-        if status_dict[k] != 0:
-            print("{}: {}".format(k, status_dict[k]))
+    print_stats(total_size, status_codes)
+    raise
