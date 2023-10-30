@@ -1,32 +1,34 @@
 #!/usr/bin/python3
 """
-A method that determins if a given data set
-represents a valid UTF8-encoding
+Method that determines if a given data set represents a valid UTF-8 encoding.
+* Return: True if data is a valid UTF-8 encoding, else return False
+* A character in UTF-8 can be 1 to 4 bytes long
+* The data set can contain multiple characters
+* The data will be represented by a list of integers
+* Each integer represents 1 byte of data, therefore you only need
+* to handle the 8 least significant bits of each integer
 """
 
 
 def validUTF8(data):
-    """
-    Returns true ifdata is valid UTF-8 encoding
-    Args: data - the list of ints to check
-    """
-    points = 0
-
+    """ UTF-8 Validation """
+    bytesLong = 0
+    binaryMoveLeft7 = 1 << 7
+    binaryMoveLeft6 = 1 << 6
     for byte in data:
-        if points == 0:
-            if byte >> 3 == 0b11110:
-                points = 3
-            elif byte >> 4 == 0b1110:
-                points = 2
-            elif byte >> 5 == 0b110:
-                points = 1
-            elif byte >> 7 == 0:
-                points = 0
-            else:
+        binaryMove = 1 << 7
+        if bytesLong == 0:
+            while byte & binaryMove:
+                bytesLong += 1
+                binaryMove = binaryMove >> 1
+            if bytesLong == 0:
+                continue
+            if bytesLong == 1 or bytesLong > 4:
                 return False
         else:
-            if byte >> 6 != 0b10:
+            if not (byte & binaryMoveLeft7 and not (byte & binaryMoveLeft6)):
                 return False
-            points = points - 1
-
-        return points == 0
+        bytesLong -= 1
+    if bytesLong == 0:
+        return True
+    return False
