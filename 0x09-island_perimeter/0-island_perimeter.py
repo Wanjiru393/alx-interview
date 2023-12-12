@@ -1,42 +1,62 @@
 #!/usr/bin/python3
-"""Island perimeter."""
+'''0x09. Island Perimeter'''
 
 
-from typing import List
+def island_perimeter(grid):
+    '''returns the perimeter of the island described in grid'''
+    counter = 0
+    grid_max = len(grid) - 1  # index of the last list in the grid
+    lst_max = len(grid[0]) - 1  # index of the last square in list
 
+    for lst_idx, lst in enumerate(grid):
+        for land_idx, land in enumerate(lst):
+            if land == 1:
+                # left and right
+                if land_idx == 0:
+                    # left side
+                    counter += 1
 
-def island_perimeter(grid: List[List[int]]) -> int:
-    """
-    Find the perimeter of an island.
+                    # right side
+                    if lst[land_idx + 1] == 0:
+                        counter += 1
+                elif land_idx == lst_max:
+                    # left side
+                    if lst[land_idx - 1] == 0:
+                        counter += 1
 
-    args:
-        grid (list of list): a matrix with 0 as water and 1 as land
-    returns:
-        the perimeter of the island
+                    # right side
+                    counter += 1
+                else:
+                    # left side
+                    if lst[land_idx - 1] == 0:
+                        counter += 1
 
-    """
-    island_in_grid = False
-    for grid_list in grid:
-        if 1 in grid_list:
-            island_in_grid = True
-            break
-    if not island_in_grid or not grid:
-        return 0
+                    # right side
+                    if lst[land_idx + 1] == 0:
+                        counter += 1
 
-    grid_height = len(grid)
-    grid_width = len(grid[0])
-    p = 0
+                # top and down
+                if lst_idx == 0:
+                    # top side
+                    counter += 1
 
-    for i in range(1, grid_height - 1):
-        for j in range(1, grid_width - 1):
-            if grid[i][j] == 1:
-                p += 4
-                if grid[i - 1][j] == 1:
-                    p -= 1
-                if grid[i + 1][j] == 1:
-                    p -= 1
-                if grid[i][j - 1] == 1:
-                    p -= 1
-                if grid[i][j + 1] == 1:
-                    p -= 1
-    return p
+                    # bottom side
+                    if grid[lst_idx + 1][land_idx] == 0:
+                        counter += 1
+                elif lst_idx == grid_max:
+                    # top side
+                    if grid[lst_idx - 1][land_idx] == 0:
+                        counter += 1
+
+                    # bottom side
+                    counter += 1
+                else:
+                    # top side
+                    if grid[lst_idx - 1][land_idx] == 0:
+                        counter += 1
+
+                    # bottom side
+                    if grid[lst_idx + 1][land_idx] == 0:
+                        counter += 1
+
+    return counter
